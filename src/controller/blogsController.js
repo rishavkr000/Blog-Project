@@ -12,8 +12,8 @@ let isValid = (value) => {
   return true;
 };
 
-let isValidObjectId = function (objectId) { 
-  return mongoose.Types.ObjectId.isValid(objectId) 
+let isValidObjectId = function (ObjectId) {
+  return mongoose.isValidObjectId(ObjectId)
 }
 
 const createBlogs = async (req, res) => {
@@ -106,28 +106,20 @@ let getBlogs = async function (req, res) {
 const updateBlog = async (req, res) => {
   try {
     let blogId = req.params.blogId;
-    let authorIdfromToken = req.authorId;
-    console.log(blogId)
 
+    if (!isValidObjectId(req.params.blogId)) { 
+      return res.status(400).send({ status: false, msg: "Invalid blogId" }) 
+    }
+    
     let data = await blogsModel.findOne({$and:[{ _id: blogId},{isPublished:false}]} );
 
     if (!data) {
       return res.status(400).send({ status: false, msg: "Data not found/ Already Updated" });
     }
 
-    if (!isValidObjectId(blogId)) { 
-      return res.status(400).send({ status: false, msg: "blogId is incorrect" }) 
-    }
-
-    if (!isValidObjectId(authorIdfromToken)) {
-      return res.status(400).send({ status: false, msg: "authorIdFromToken is incorrect" });
-    }
-
-    if (data.authorId.toString()!== authorIdfromToken) {
+    if (data.authorId.toString()!== req.authorId) {
       return res.status(403).send({ status: false, mag: "unauthorized access" })
     }
-
-    
 
     let { title, body, tags, subcategory } = req.body;
 
@@ -143,7 +135,6 @@ const updateBlog = async (req, res) => {
     return res.status(200).send({ msg: "Blog Updated Successfully", status: true, data: newBlog });
   }
   catch (err) {
-    console.log(err.message);
     res.status(500).send({ error: err.message });
   }
 };
