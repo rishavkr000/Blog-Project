@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Schema.Types.ObjectId;
 
-
 const blogSchema = new mongoose.Schema(
   {
     title: {
@@ -19,30 +18,37 @@ const blogSchema = new mongoose.Schema(
       ref: "Author",
       required: true,
     },
-    tags: [{ type: String, trim: true }],
+    tags: [
+      { 
+        type: String, 
+        trim: true 
+      }
+    ],
 
     category: {
       type: String,
       required: true,
       trim: true,
     },
-    subcategory: [{ type: String, trim: true }],
-
+    subcategory: [
+      { 
+        type: String, 
+        trim: true 
+      }
+    ],
     isPublished: {
       type: Boolean,
       default: false,
     },
     publishedAt: {
-      type: Date,
-      default: null
+      type: Date
     },
     isDeleted: {
       type: Boolean,
       default: false,
     },
     deletedAt: {
-      type: Date,
-      default: null
+      type: Date
     },
   },
   { timestamps: true }
